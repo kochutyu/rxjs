@@ -38,6 +38,23 @@ const operator = () => {
         .subscribe(value => console.log(value));
 }
 
+const pipe = () => {
+    // observable of values from a text box, pipe chains operators together
+    inputValue
+        .pipe(
+            // wait for a 200ms pause
+            debounceTime(200),
+            // if the value is the same, ignore
+            distinctUntilChanged(),
+            // if an updated value comes through while request is still active cancel previous request and 'switch' to new observable
+            switchMap(searchTerm => typeaheadApi.search(searchTerm))
+        )
+        // create a subscription
+        .subscribe(results => {
+            // update the dom
+        });
+}
+
 export function init() {
 
     // ? Observable____________________________________________________________________________________
@@ -78,4 +95,11 @@ export function init() {
     // ! для користувача нові дані
     // TODO:
     // operator();
+
+    // ? Pipe__________________________________________________________________________________________
+    // * Pipe - це труба в яку ми можемо запихати свії оператори(рабів), які будуть нам модифікувати
+    // * вхідні дані.
+    // TODO:
+    pipe();
+
 }

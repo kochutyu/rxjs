@@ -14991,7 +14991,20 @@ var operator = function operator() {
   });
 };
 
-function init() {// ? Observable____________________________________________________________________________________
+var pipe = function pipe() {
+  // observable of values from a text box, pipe chains operators together
+  inputValue.pipe( // wait for a 200ms pause
+  debounceTime(200), // if the value is the same, ignore
+  distinctUntilChanged(), // if an updated value comes through while request is still active cancel previous request and 'switch' to new observable
+  switchMap(function (searchTerm) {
+    return typeaheadApi.search(searchTerm);
+  })) // create a subscription
+  .subscribe(function (results) {// update the dom
+  });
+};
+
+function init() {
+  // ? Observable____________________________________________________________________________________
   // * Observable - це потічок, стрім (з реального життя вода з крану яка тече).
   // TODO: 
   // observable();
@@ -15022,6 +15035,11 @@ function init() {// ? Observable________________________________________________
   // ! для користувача нові дані
   // TODO:
   // operator();
+  // ? Pipe__________________________________________________________________________________________
+  // * Pipe - це труба в яку ми можемо запихати свії оператори(рабів), які будуть нам модифікувати
+  // * вхідні дані.
+  // TODO:
+  pipe();
 }
 },{"rxjs":"node_modules/rxjs/_esm5/index.js","rxjs/operators":"node_modules/rxjs/_esm5/operators/index.js"}],"scripts.js":[function(require,module,exports) {
 "use strict";
