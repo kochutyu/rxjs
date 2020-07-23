@@ -54,4 +54,17 @@ body {
     right: 0;
 }
 
+.coords {
+    position: absolute;
+    height: 30px;
+    width: 30px;
+    text-align: center;
+    background: silver;
+    border-radius: 80%;
+}
+
+.coords:hover {
+    cursor: default;
+}
+
 /*# sourceMappingURL=/style.e308ff8e.css.map */

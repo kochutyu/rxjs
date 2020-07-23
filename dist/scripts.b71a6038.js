@@ -15088,20 +15088,99 @@ function init() {// ? Observable________________________________________________
   // * --- flatten (оператори для керування підпискою в середині підписки).
   // * --- switch (переключають підписки | наприклад, була одна підписка і
   // *     на іншу підписку, а від попередньої відписалися).
-  // * ---concat (якщо важливий порядок виконання підписок | спочатку
+  // * --- concat (якщо важливий порядок виконання підписок | спочатку
   // *     виконується одна і якщо вона завершується - автоматично підписуємося на
   // *     наступну підписку).
   // * --- merge (добавлення(об'єднання) нової підписки до головної "observable" | 
   // * --- якщо брати приклад з життя, то можна навести аналогію автомагістралі, коли 
   // * --- якась машина перестроюється на одну головну полосу з другої полоси).
 }
+},{"rxjs":"node_modules/rxjs/_esm5/index.js","rxjs/operators":"node_modules/rxjs/_esm5/operators/index.js"}],"Subjects/index.js":[function(require,module,exports) {
+"use strict";
+
+Object.defineProperty(exports, "__esModule", {
+  value: true
+});
+exports.init = init;
+
+var _rxjs = require("rxjs");
+
+var _operators = require("rxjs/operators");
+
+function newSubject() {
+  // RxJS v6+
+  var sub = new _rxjs.Subject();
+  sub.next(1); //! Subject doesn't see before subscribe!
+
+  sub.subscribe(function (x) {
+    console.log('Subscriber A', x);
+  });
+  sub.next(2); // OUTPUT => Subscriber A 2
+
+  sub.subscribe(function (x) {
+    console.log('Subscriber B', x);
+  });
+  sub.next(3); // OUTPUT => Subscriber A 3, Subscriber B 3 (logged from both subscribers)
+}
+
+function newBehaviorSubject_1() {
+  var subject = new _rxjs.BehaviorSubject(123); // two new subscribers will get initial value => output: 123, 123
+
+  subject.subscribe(console.log);
+  subject.subscribe(console.log); // two subscribers will get new value => output: 456, 456
+
+  subject.next(456); // new subscriber will get latest value (456) => output: 456
+
+  subject.subscribe(console.log); // all three subscribers will get new value => output: 789, 789, 789
+
+  subject.next(789); // output: 123, 123, 456, 456, 456, 789, 789, 789
+}
+
+function newBehaviorSubject_2() {
+  // RxJS v6+
+  document.body.innerHTML = '';
+
+  var setElementText = function setElementText(elemId, text) {
+    return document.getElementById(elemId).innerText = text.toString();
+  };
+
+  var addHtmlElement = function addHtmlElement(coords) {
+    return document.body.innerHTML += "\n  <div \n    id=".concat(coords.id, "\n    style=\"\n      top: calc(").concat(coords.y, "px - 15px);\n      left: calc(").concat(coords.x, "px - 15px); \n    \"\n    class=\"coords\"\n    >\n  </div>");
+  };
+
+  var subject = new _rxjs.BehaviorSubject(0);
+  var click$ = (0, _rxjs.fromEvent)(document, 'click').pipe((0, _operators.map)(function (e) {
+    return {
+      x: e.clientX,
+      y: e.clientY,
+      id: Math.random()
+    };
+  }), (0, _operators.tap)(addHtmlElement), (0, _operators.mergeMap)(function (coords) {
+    return subject.pipe((0, _operators.tap)(function (v) {
+      return setElementText(coords.id, v);
+    }));
+  }));
+  var interval$ = (0, _rxjs.interval)(1000).pipe((0, _operators.tap)(function (v) {
+    subject.next(v);
+    console.log(addHtmlElement);
+  }));
+  (0, _rxjs.merge)(click$, interval$).subscribe();
+}
+
+function init() {// newSubject();
+  // newBehaviorSubject_1();
+  // newBehaviorSubject_2();
+}
 },{"rxjs":"node_modules/rxjs/_esm5/index.js","rxjs/operators":"node_modules/rxjs/_esm5/operators/index.js"}],"scripts.js":[function(require,module,exports) {
 "use strict";
 
 var _index = require("./Concepts/index");
 
+var _index2 = require("./Subjects/index");
+
 (0, _index.init)();
-},{"./Concepts/index":"Concepts/index.js"}],"../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
+(0, _index2.init)();
+},{"./Concepts/index":"Concepts/index.js","./Subjects/index":"Subjects/index.js"}],"../../AppData/Roaming/npm/node_modules/parcel-bundler/src/builtins/hmr-runtime.js":[function(require,module,exports) {
 var global = arguments[3];
 var OVERLAY_ID = '__parcel__error__overlay__';
 var OldModule = module.bundle.Module;
@@ -15129,7 +15208,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51694" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "55748" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

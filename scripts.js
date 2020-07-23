@@ -1,5 +1,10 @@
 import {
-    init
+    init as initConcepts
 } from './Concepts/index';
 
-init();
+import {
+    init as initSubjects
+} from './Subjects/index';
+
+initConcepts();
+initSubjects();
