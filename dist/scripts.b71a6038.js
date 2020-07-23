@@ -15145,7 +15145,7 @@ function newBehaviorSubject_2() {
   };
 
   var addHtmlElement = function addHtmlElement(coords) {
-    return document.body.innerHTML += "\n  <div \n    id=".concat(coords.id, "\n    style=\"\n      top: calc(").concat(coords.y, "px - 15px);\n      left: calc(").concat(coords.x, "px - 15px); \n    \"\n    class=\"coords\"\n    >\n  </div>");
+    return document.body.innerHTML += "\n    <div \n    id=".concat(coords.id, "\n    style=\"\n    top: calc(").concat(coords.y, "px - 15px);\n    left: calc(").concat(coords.x, "px - 15px); \n    \"\n    class=\"coords\"\n    >\n    </div>");
   };
 
   var subject = new _rxjs.BehaviorSubject(0);
@@ -15167,9 +15167,39 @@ function newBehaviorSubject_2() {
   (0, _rxjs.merge)(click$, interval$).subscribe();
 }
 
+function newReplaySubject() {
+  // RxJS v6+
+  var sub = new _rxjs.ReplaySubject(3);
+  sub.next(1);
+  sub.next(2);
+  sub.subscribe(console.log); // OUTPUT => 1,2
+
+  sub.next(3); // OUTPUT => 3
+
+  sub.next(4); // OUTPUT => 4
+
+  sub.subscribe(console.log); // OUTPUT => 2,3,4 (log of last 3 values from new subscriber)
+
+  sub.next(5); // OUTPUT => 5,5 (log from both subscribers)
+}
+
+function newAsyncSubject() {
+  // RxJS v6+
+  var sub = new _rxjs.AsyncSubject();
+  sub.subscribe(console.log);
+  sub.next(123); //nothing logged
+
+  sub.subscribe(console.log);
+  sub.next(456); //nothing logged
+
+  sub.complete(); //456, 456 logged by both subscribers
+}
+
 function init() {// newSubject();
   // newBehaviorSubject_1();
   // newBehaviorSubject_2();
+  // newReplaySubject();
+  // newAsyncSubject();
 }
 },{"rxjs":"node_modules/rxjs/_esm5/index.js","rxjs/operators":"node_modules/rxjs/_esm5/operators/index.js"}],"scripts.js":[function(require,module,exports) {
 "use strict";
