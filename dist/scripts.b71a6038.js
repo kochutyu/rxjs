@@ -15003,8 +15003,38 @@ var pipe = function pipe() {
   });
 };
 
-function init() {
-  // ? Observable____________________________________________________________________________________
+var creation_operators = function creation_operators() {
+  var destroySubject = new _rxjs.Subject();
+  var arr = [];
+  destroySubject.subscribe();
+  (0, _rxjs.fromEvent)(window, 'scroll').pipe( // we will discuss cleanup strategies like this in future article
+  (0, _operators.takeUntil)(destroySubject)).subscribe(function (event) {
+    // calculate and update DOM
+    if (arr.length < 5) {
+      arr.push(event);
+      console.log(event);
+    } else {
+      destroySubject.unsubscribe();
+    }
+  });
+};
+
+var multicasting_operators = function multicasting_operators() {
+  var subject = new _rxjs.BehaviorSubject([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+  var source = subject.pipe((0, _operators.shareReplay)());
+  var firstSubscriber = source.subscribe(function (next) {
+    // perform some action
+    console.log(next, ' => USER 1');
+  }); // sometime later...
+  // second subscriber gets last emitted value on subscription, shares execution context with 'firstSubscriber'
+
+  var secondSubscriber = source.subscribe(function (next) {
+    // perform some action
+    console.log(next, ' => USER 2');
+  });
+};
+
+function init() {// ? Observable____________________________________________________________________________________
   // * Observable - це потічок, стрім (з реального життя вода з крану яка тече).
   // TODO: 
   // observable();
@@ -15039,7 +15069,21 @@ function init() {
   // * Pipe - це труба в яку ми можемо запихати свії оператори(рабів), які будуть нам модифікувати
   // * вхідні дані.
   // TODO:
-  pipe();
+  // pipe();
+  // ? Operators can be grouped into common categories_______________________________________________
+  // * --- untility (сервісні оператори| пошук багів, відкладка коду).
+  // * --- creation (для створення стріму | звичайні евенти JS також можна перетворити на)
+  // *     стрім).
+  // TODO:
+  // creation_operators();
+  // * --- сombination (для об'єднання вихідних даних із декілької стрімів).
+  // * --- error (для відловлення помилок і їх обробка).
+  // * --- filtering (дає методи для прийняття даної вхідногї інформації або відхилення. Pipe
+  // *     завжди опрацьовує кожен елемент почерзі(окремо).
+  // * --- multicasting (по стандарту observables є одноадресні, але можна зробити багатоадресним).
+  // TODO:
+  // multicasting_operators();
+  // * --- transformation (дає методи для трансформування вхідної інформації | обробляє кожен об'єкт)
 }
 },{"rxjs":"node_modules/rxjs/_esm5/index.js","rxjs/operators":"node_modules/rxjs/_esm5/operators/index.js"}],"scripts.js":[function(require,module,exports) {
 "use strict";
@@ -15075,7 +15119,7 @@ var parent = module.bundle.parent;
 if ((!parent || !parent.isParcelRequire) && typeof WebSocket !== 'undefined') {
   var hostname = "" || location.hostname;
   var protocol = location.protocol === 'https:' ? 'wss' : 'ws';
-  var ws = new WebSocket(protocol + '://' + hostname + ':' + "54082" + '/');
+  var ws = new WebSocket(protocol + '://' + hostname + ':' + "51694" + '/');
 
   ws.onmessage = function (event) {
     checkedAssets = {};

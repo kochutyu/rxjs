@@ -1,9 +1,17 @@
 import {
     fromEvent,
-    of
+    of ,
+    Subject,
+    BehaviorSubject,
+    timer,
+    interval
 } from 'rxjs';
+
 import {
-    map
+    map,
+    takeUntil,
+    shareReplay,
+    count,
 } from 'rxjs/operators';
 
 const observable = () => {
@@ -55,6 +63,47 @@ const pipe = () => {
         });
 }
 
+const creation_operators = () => {
+    const destroySubject = new Subject();
+    let arr = [];
+    destroySubject.subscribe();
+    fromEvent(window, 'scroll')
+        .pipe(
+            // we will discuss cleanup strategies like this in future article
+            takeUntil(destroySubject)
+        )
+        .subscribe(event => {
+            // calculate and update DOM
+            if (arr.length < 5) {
+                arr.push(event);
+                console.log(event);
+            } else {
+                destroySubject.unsubscribe();
+            }
+
+        });
+}
+
+const multicasting_operators = () => {
+    const subject = new BehaviorSubject([1, 2, 3, 4, 5, 6, 7, 8, 9, 10]);
+
+    const source = subject.pipe(shareReplay());
+
+    const firstSubscriber = source.subscribe((next) => {
+        // perform some action
+        console.log(next, ' => USER 1');
+    })
+
+    // sometime later...
+
+    // second subscriber gets last emitted value on subscription, shares execution context with 'firstSubscriber'
+    const secondSubscriber = source.subscribe((next) => {
+        // perform some action
+        console.log(next, ' => USER 2');
+    });
+
+}
+
 export function init() {
 
     // ? Observable____________________________________________________________________________________
@@ -100,6 +149,26 @@ export function init() {
     // * Pipe - це труба в яку ми можемо запихати свії оператори(рабів), які будуть нам модифікувати
     // * вхідні дані.
     // TODO:
-    pipe();
+    // pipe();
 
+    // ? Operators can be grouped into common categories_______________________________________________
+    // * --- untility (сервісні оператори| пошук багів, відкладка коду).
+
+    // * --- creation (для створення стріму | звичайні евенти JS також можна перетворити на)
+    // *     стрім).
+    // TODO:
+    // creation_operators();
+
+    // * --- сombination (для об'єднання вихідних даних із декілької стрімів).
+
+    // * --- error (для відловлення помилок і їх обробка).
+
+    // * --- filtering (дає методи для прийняття даної вхідногї інформації або відхилення. Pipe
+    // *     завжди опрацьовує кожен елемент почерзі(окремо).
+
+    // * --- multicasting (по стандарту observables є одноадресні, але можна зробити багатоадресним).
+    // TODO:
+    // multicasting_operators();
+
+    // * --- transformation (дає методи для трансформування вхідної інформації | обробляє кожен об'єкт)
 }
